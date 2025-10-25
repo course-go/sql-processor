@@ -1,0 +1,6 @@
+---
+name: SQL Processor CI
+on: pull_request
+jobs:
+  sql-processor-ci:
+    uses: course-go/homework/.github/workflows/sql-processor.yaml@master
