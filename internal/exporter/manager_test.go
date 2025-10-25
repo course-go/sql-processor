@@ -12,7 +12,7 @@ import (
 	"github.com/course-go/sql-processor/internal/test/testlogger"
 )
 
-func TestManager(t *testing.T) {
+func TestManager(t *testing.T) { //nolint: gocognit
 	t.Parallel()
 
 	file1 := sql.File{
@@ -44,12 +44,26 @@ func TestManager(t *testing.T) {
 			go p.Run(ctx)
 
 			// Send test statements to exporter manager.
-			for _, statement := range statements {
-				statementCh <- statement
-			}
+			go func() {
+				for _, statement := range statements {
+					select {
+					case statementCh <- statement:
+					case <-ctx.Done():
+						return
+					}
+				}
+			}()
 
 			// Wait for exporter to receive data or timeout.
 			synctest.Wait()
+
+			if len(statements) != len(mock.Statements()) {
+				t.Fatalf(
+					"expected statement count does not match: expected = %v, got = %v",
+					len(statements),
+					len(mock.Statements()),
+				)
+			}
 
 			// Check that exporter statements match.
 			for i := range statements {
@@ -90,15 +104,30 @@ func TestManager(t *testing.T) {
 			go m.Run(ctx)
 
 			// Send test statements to exporter manager.
-			for _, statement := range statements {
-				statementCh <- statement
-			}
+			go func() {
+				for _, statement := range statements {
+					select {
+					case statementCh <- statement:
+					case <-ctx.Done():
+						return
+					}
+				}
+			}()
 
 			// Wait for exporters to receive data or timeout.
 			synctest.Wait()
 
 			// Check that exporter statements match.
 			for _, mock := range mocks {
+				if len(statements) != len(mock.Statements()) {
+					t.Errorf(
+						"expected statement count does not match: expected = %v, got = %v",
+						len(statements),
+						len(mock.Statements()),
+					)
+					continue
+				}
+
 				for i := range statements {
 					if mock.Statements()[i] != statements[i] {
 						t.Fatalf(
