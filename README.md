@@ -84,6 +84,20 @@ on appropriate level.
 
 If you are unsure about some behaviour take the tests as the source of truth.
 
+### Bonus
+
+Implement graceful shutdown. Listen to `SIGINT` and `SIGTERM` signals and
+when such signal occurs, wait for you components to finish processing already
+opened files. You might need to implement additional `Close` methods for some of
+the components so you can reasonably control them.
+
+For listening to the signals, checkout
+the [os/signal](https://pkg.go.dev/os/signal) package.
+
+You can get up to 2 points for implementing the bonus.
+
+If you decide to implement the bonus, please do so in an additional commit.
+
 ## Requirements
 
 The CLI application has to support all the functionality previously
