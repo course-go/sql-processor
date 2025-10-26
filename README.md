@@ -14,9 +14,11 @@ statements get processed. After processing, they get exported to a bunch of expo
 
 ![SQL Processor diagram](assets/sql-processor.svg)
 
-In the repository, you will find skeleton of the application. You are free to change
-any code as long as all the tests work. However, you should be able to finish the
-assignment just by implementing the `Run` functions and some of the `New` constructors.
+In the repository, you will find skeleton of the application. First of all, look
+around. Some of the things you will need are already implemented.
+You are free to change any code as long as all the tests work.
+However, you should be able to finish the assignment just by implementing
+the `Run` functions and some of the `New` constructors.
 All the places that you should implement are denoted by a `TODO`.
 
 ### Specification
@@ -29,7 +31,8 @@ sql-processor [DIRECTORY DIRECTIVE]
 
 where **directory directive** represents a pair of directory path and SQL dialect
 separated using colon.
-If there are no directives provided, the application will exit with an error.
+If there are no directives provided or some of the directives are invalid, the
+application will exit with an error.
 
 The example usage is as follows:
 
