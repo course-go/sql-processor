@@ -214,10 +214,14 @@ func TestObserver(t *testing.T) { //nolint: cyclop, gocognit, maintidx
 
 		<-fileReaderDone
 
-		if len(files) != len(postgresFiles)+len(mysqlFiles) {
+		postgresFiles := prefixPaths(postgresDirectory, postgresFiles)
+		mysqlFiles := prefixPaths(mysqlDirectory, mysqlFiles)
+		expectedFiles := append(postgresFiles, mysqlFiles...) //nolint: gocritic
+
+		if len(files) != len(expectedFiles) {
 			t.Errorf(
 				"observed file count does not match: expected = %v, got = %v",
-				len(postgresFiles)+len(mysqlFiles),
+				len(expectedFiles),
 				len(files),
 			)
 		}
@@ -226,14 +230,10 @@ func TestObserver(t *testing.T) { //nolint: cyclop, gocognit, maintidx
 			return cmp.Compare(a.Path, b.Path)
 		})
 
-		postgresFiles := prefixPaths(postgresDirectory, postgresFiles)
-		mysqlFiles := prefixPaths(mysqlDirectory, mysqlFiles)
-		expectedFiles := append(postgresFiles, mysqlFiles...) //nolint: gocritic
-
 		// Check that exporter statements match.
 		for i := range files {
 			if files[i] != expectedFiles[i] {
-				t.Errorf("received file does not match: expected = %v, got = %v", postgresFiles[i], files[i])
+				t.Errorf("received file does not match: expected = %v, got = %v", expectedFiles[i], files[i])
 			}
 		}
 	})
