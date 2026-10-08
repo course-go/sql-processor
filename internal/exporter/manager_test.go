@@ -90,7 +90,7 @@ func TestManager(t *testing.T) { //nolint: gocognit
 
 			statementCh := make(chan sql.Statement, 1)
 
-			var exporters []exporter.Exporter
+			exporters := make([]exporter.Exporter, 0, len(mocks))
 			for _, mock := range mocks {
 				exporters = append(exporters, mock)
 			}
